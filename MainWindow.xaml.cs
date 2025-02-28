@@ -27,7 +27,6 @@ namespace PhoneBackup
             }
         }
 
-        private void ReadFolders(MediaDevice device, TreeViewItem parentItem, string path)
         {
             var directories = device.EnumerateDirectories(path);
             foreach (var directory in directories)
