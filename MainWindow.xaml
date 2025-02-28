@@ -3,13 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PhoneBackup"
+        xmlns:local="clr-namespace:PhoneBackup" xmlns:viewmodels="clr-namespace:PhoneBackup.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel>
-            <Button Name="btnReadFolders" Content="Read Folders" Click="btnReadFolders_Click" Margin="10"/>
-            <TreeView Name="treeViewFolders" Margin="10"/>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.10*" />
+            <RowDefinition Height="0.80*" />
+            <RowDefinition Height="0.10*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.1*" />
+            <ColumnDefinition Width="0.2*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+            <ComboBox Width="120" Margin="10" HorizontalAlignment="Left" SelectedItem="{Binding SelectedPhone}" ItemsSource="{Binding Phones}" DisplayMemberPath="Name" />
+            <Button Content="Refresh" Width="100" Height="23.404" Command="{Binding RefreshDevicesCommand}"  />
+        </StackPanel>        
+        
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            
+            <Button Content="Open Config" Width="100" Margin="10"/>
+            <Button Content="Save Config" Width="100" Margin="10"/>
+            <Button Content="Save As Config" Width="100" Margin="10"/>
+            
+        </StackPanel>
+
+        <TreeView Name="treeViewFolders" Margin="10" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding PhoneDirectories}" DisplayMemberPath="Name"/>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Add Folder" Width="100" Margin="10"/>
+            <Button Content="Run Backup" Width="100" Margin="10"/>
         </StackPanel>
     </Grid>
 </Window>
