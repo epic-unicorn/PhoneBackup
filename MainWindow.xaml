@@ -20,7 +20,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-            <ComboBox Width="120" Margin="10" HorizontalAlignment="Left" SelectedItem="{Binding SelectedPhone}" ItemsSource="{Binding Phones}" DisplayMemberPath="Name" />
+            <ComboBox Width="120" Margin="10" HorizontalAlignment="Left" SelectedItem="{Binding SelectedPhone, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Phones}" DisplayMemberPath="Name" />
             <Button Content="Refresh" Width="100" Height="23.404" Command="{Binding RefreshDevicesCommand}"  />
         </StackPanel>        
         
@@ -32,11 +32,26 @@
             
         </StackPanel>
 
-        <TreeView Name="treeViewFolders" Margin="10" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding PhoneDirectories}" DisplayMemberPath="Name"/>
+        <ListView Name="phoneDirectories" Margin="10" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding PhoneDirectories}" SelectedItem="{Binding SelectedPhoneDirectory}" />
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Add Folder" Width="100" Margin="10"/>
+        <ListView Name="backupEntries" Margin="10" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding BackupEntries}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=Phone.Name}" />
+                        <TextBlock Text="{Binding Path=SourceDirectory}" />
+                        <TextBlock Text="{Binding Path=DestinationDirectory}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Run Backup" Width="100" Margin="10"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Add Folder" Width="100" Margin="10" Command="{Binding AddFolderCommand}" CommandParameter="{Binding SelectedPhoneDirectory}"  />
         </StackPanel>
     </Grid>
 </Window>

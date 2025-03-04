@@ -1,23 +1,25 @@
-﻿using FolderNavigationDemo;
-using MediaDevices;
+﻿using MediaDevices;
 using PhoneBackup.Commands;
 using PhoneBackup.Models;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
 
 namespace PhoneBackup.ViewModels
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel
     {
         private readonly ICommand m_RefreshDevicesCommand;
         public ICommand RefreshDevicesCommand
         {
             get { return m_RefreshDevicesCommand; }
+        }
+
+        private readonly ICommand m_AddFolderCommand;
+        public ICommand AddFolderCommand
+        {
+            get { return m_AddFolderCommand; }
         }
 
         private Phone m_SelectedPhone;
@@ -31,8 +33,19 @@ namespace PhoneBackup.ViewModels
             }
         }
 
-        private List<Phone> m_Phones;
-        public List<Phone> Phones
+        private string m_SelectedPhoneDirectory;
+        public string SelectedPhoneDirectory
+        {
+            get { return m_SelectedPhoneDirectory; }
+            set
+            {
+                m_SelectedPhoneDirectory = value;
+                OnPropertyChanged(nameof(SelectedPhoneDirectory));
+            }
+        }
+
+        private ObservableCollection<Phone> m_Phones;
+        public ObservableCollection<Phone> Phones
         {
             get { return m_Phones; }
             set
@@ -42,8 +55,8 @@ namespace PhoneBackup.ViewModels
             }
         }
 
-        private ObservableCollection<PhoneDirectory> m_PhoneDirectories;
-        public ObservableCollection<PhoneDirectory> PhoneDirectories
+        private ObservableCollection<string> m_PhoneDirectories;
+        public ObservableCollection<string> PhoneDirectories
         {
             get { return m_PhoneDirectories; }
             set
@@ -53,6 +66,16 @@ namespace PhoneBackup.ViewModels
             }
         }
 
+        private ObservableCollection<BackupEntry> m_BackupEntries;
+        public ObservableCollection<BackupEntry> BackupEntries
+        {
+            get { return m_BackupEntries; }
+            set
+            {
+                m_BackupEntries = value;
+                OnPropertyChanged(nameof(BackupEntries));
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
@@ -63,8 +86,11 @@ namespace PhoneBackup.ViewModels
         public MainWindowViewModel()
         {
             m_RefreshDevicesCommand = new RefreshDevicesCommand(this);
-            m_Phones = new List<Phone>();
-            m_PhoneDirectories = new ObservableCollection<PhoneDirectory>();
+            m_AddFolderCommand = new AddFolderCommand(this);
+
+            m_Phones = new ObservableCollection<Phone>();
+            m_PhoneDirectories = new ObservableCollection<string>();
+            m_BackupEntries = new ObservableCollection<BackupEntry>();
         }
 
         internal void HandleRefreshDevicesCommand(object parameter)
@@ -99,8 +125,19 @@ namespace PhoneBackup.ViewModels
                 var subDirectories = device.EnumerateDirectories(System.IO.Path.GetFileName(directory));
                 foreach (var subDirectory in subDirectories)
                 {
-                    PhoneDirectories.Add(new PhoneDirectory() { Name = System.IO.Path.GetFileName(subDirectory) });
+                    PhoneDirectories.Add(Path.GetFileName(subDirectory) );
                 }
+            }
+        }
+
+        internal void AddFolder(object parameter)
+        {
+            var backupDirectory = parameter as string;
+            if (backupDirectory != null)
+            {
+                //todo check exist
+
+                BackupEntries.Add(new BackupEntry() { Phone = SelectedPhone, SourceDirectory = backupDirectory, DestinationDirectory = "TODO" });
             }
         }
     }
