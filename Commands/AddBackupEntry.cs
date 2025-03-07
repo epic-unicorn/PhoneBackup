@@ -3,11 +3,11 @@ using System.Windows.Input;
 
 namespace PhoneBackup.Commands
 {
-    public class AddFolderCommand : ICommand
+    public class AddBackupEntry : ICommand
     {
         private readonly MainWindowViewModel m_ViewModel;
 
-        public AddFolderCommand(MainWindowViewModel viewModel)
+        public AddBackupEntry(MainWindowViewModel viewModel)
         {
             m_ViewModel = viewModel;
         }

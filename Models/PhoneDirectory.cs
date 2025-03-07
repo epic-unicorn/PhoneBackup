@@ -7,6 +7,6 @@ namespace FolderNavigationDemo
     {
         public string Name { get; set; }
         public string Path { get; set; }
-        public string NumberOfFFiles { get; set; }
+        public int NumberOfFFiles { get; set; }
     }
 }

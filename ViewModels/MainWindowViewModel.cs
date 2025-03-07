@@ -1,15 +1,19 @@
-﻿using MediaDevices;
+﻿using FolderNavigationDemo;
+using MediaDevices;
 using PhoneBackup.Commands;
 using PhoneBackup.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Controls;
 using System.Windows.Input;
+using static System.Net.WebRequestMethods;
 
 namespace PhoneBackup.ViewModels
 {
     public class MainWindowViewModel
     {
+
         private readonly ICommand m_RefreshDevicesCommand;
         public ICommand RefreshDevicesCommand
         {
@@ -33,8 +37,8 @@ namespace PhoneBackup.ViewModels
             }
         }
 
-        private string m_SelectedPhoneDirectory;
-        public string SelectedPhoneDirectory
+        private PhoneDirectory m_SelectedPhoneDirectory;
+        public PhoneDirectory SelectedPhoneDirectory
         {
             get { return m_SelectedPhoneDirectory; }
             set
@@ -55,8 +59,8 @@ namespace PhoneBackup.ViewModels
             }
         }
 
-        private ObservableCollection<string> m_PhoneDirectories;
-        public ObservableCollection<string> PhoneDirectories
+        private ObservableCollection<PhoneDirectory> m_PhoneDirectories;
+        public ObservableCollection<PhoneDirectory> PhoneDirectories
         {
             get { return m_PhoneDirectories; }
             set
@@ -86,10 +90,10 @@ namespace PhoneBackup.ViewModels
         public MainWindowViewModel()
         {
             m_RefreshDevicesCommand = new RefreshDevicesCommand(this);
-            m_AddFolderCommand = new AddFolderCommand(this);
+            m_AddFolderCommand = new AddBackupEntry(this);
 
             m_Phones = new ObservableCollection<Phone>();
-            m_PhoneDirectories = new ObservableCollection<string>();
+            m_PhoneDirectories = new ObservableCollection<PhoneDirectory>();
             m_BackupEntries = new ObservableCollection<BackupEntry>();
         }
 
@@ -125,19 +129,21 @@ namespace PhoneBackup.ViewModels
                 var subDirectories = device.EnumerateDirectories(System.IO.Path.GetFileName(directory));
                 foreach (var subDirectory in subDirectories)
                 {
-                    PhoneDirectories.Add(Path.GetFileName(subDirectory) );
+                    var subDirectoryInfo = device.GetDirectoryInfo(subDirectory);
+                    PhoneDirectories.Add(new PhoneDirectory() { Path = subDirectory, Name = Path.GetFileName(subDirectory), NumberOfFFiles = subDirectoryInfo.EnumerateFiles("*.*", SearchOption.AllDirectories).Count()});
                 }
             }
         }
 
         internal void AddFolder(object parameter)
         {
-            var backupDirectory = parameter as string;
-            if (backupDirectory != null)
+            if (parameter is PhoneDirectory phoneDirectory)
             {
-                //todo check exist
-
-                BackupEntries.Add(new BackupEntry() { Phone = SelectedPhone, SourceDirectory = backupDirectory, DestinationDirectory = "TODO" });
+                if (BackupEntries.FirstOrDefault(x => x.SourceDirectory == phoneDirectory.Path) == null)
+                {
+                    BackupEntries.Add(new BackupEntry() { Phone = SelectedPhone, SourceDirectory = phoneDirectory.Path, DestinationDirectory = "Storage directory" });
+                }
+                // todo notify user that folder already exists
             }
         }
     }

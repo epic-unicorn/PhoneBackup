@@ -32,9 +32,19 @@
             
         </StackPanel>
 
-        <ListView Name="phoneDirectories" Margin="10" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding PhoneDirectories}" SelectedItem="{Binding SelectedPhoneDirectory}" />
-
-        <ListView Name="backupEntries" Margin="10" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding BackupEntries}">
+        <ListView Name="phoneDirectories" Margin="10" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding PhoneDirectories}" SelectedItem="{Binding SelectedPhoneDirectory}" d:ItemsSource="{d:SampleData ItemCount=5}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=Name}" />
+                        <TextBlock Text="{Binding Path=Path}" />
+                        <TextBlock Text="{Binding Path=NumberOfFFiles}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <ListView Name="backupEntries" Margin="10" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding BackupEntries}" d:ItemsSource="{d:SampleData ItemCount=5}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
